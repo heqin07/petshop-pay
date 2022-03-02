@@ -26,7 +26,7 @@
         :span="8"
         style="text-align:right"
       >
-        <el-button v-if="cart.goods.length">编辑整单</el-button>
+        <!-- <el-button v-if="cart.goods.length">编辑整单</el-button> -->
         <!-- @click="handleEditOrder" -->
         <el-button @click="handleCancelOrder">整单取消</el-button>
       </el-col>
@@ -83,17 +83,7 @@
         {{ `整单立减￥${cart.discountValue}` }}
       </template>
     </div>
-    <!--快递/打包费用悬浮按钮-->
-    <div
-      v-if="cart.express.phone"
-      class="reduce"
-    >
-      <i
-        class="el-icon-close"
-        @click="hanldeCloseLogistics"
-      />
-      {{ `快递打包费 ￥${ cart.express.expressFee }` }}
-    </div>
+
     <el-row
       class="summary"
       justify="space-between"
@@ -115,13 +105,7 @@
       class="bottom"
       justify="space-between"
     >
-      <!-- <el-button
-        class="bottom-btn"
-        :disabled="!cart.goods.length"
-        @click="handleLogistics"
-      >
-        快递/打包费
-      </el-button>
+      <!-- 
       <el-button
         class="bottom-btn"
         @click="handleGift"
@@ -204,14 +188,13 @@
       >
         <el-input
           ref="keyboard"
-          v-model="name"
-          :prefix-icon="Search"
+          v-model="staffName"
           placeholder="请输入员工名称"
           maxlength="50"
           clearable
         >
           <!-- @input="handleSearch"
-          @keyup="keyboardEvent" -->
+          @keyup="keyboardEvent"  :prefix-icon="Search" -->
         </el-input>
       </el-row>
       <el-row class="group-staff">
@@ -263,12 +246,12 @@
           <el-input
             :key="reduceForm.discountType"
             v-model="reduceForm.discountValue"
-            v-input-limit="reduceForm.discountType === 1 ?
-              { min: 0.1, max: 9.9, precision: 1 } :
-              { min: 0, max: 50000.00, precision: 2 }"
             class="input"
             :placeholder="reduceForm.discountType === 1 ? '可输入0.1-9.9' : '可输入0-50000.00'"
           />
+          <!-- v-input-limit="reduceForm.discountType === 1 ?
+              { min: 0.1, max: 9.9, precision: 1 } :
+              { min: 0, max: 50000.00, precision: 2 }" -->
         </el-row>
         <el-row class="key-board">
           <KeyBoard
@@ -383,10 +366,10 @@
                   </el-tooltip>
                   <el-input
                     v-model="logisticsForm.expressFee"
-                    v-input-limit="{ min: 0, max: 10000, precision: 2 }"
                     type="number"
                     placeholder="请输入"
                   />
+                  <!-- v-input-limit="{ min: 0, max: 10000, precision: 2 }" -->
                 </div>
               </el-form-item>
             </el-col>
@@ -542,7 +525,8 @@
 <script>
 import GoodCard from './components/GoodCard.vue'
 import KeyBoard from './components/KeyBoard/index.vue'
-// import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
+import { api } from '../config'
 // import { deepClone } from '../../utils/index'
 export default {
   components: { GoodCard, KeyBoard },
@@ -558,7 +542,7 @@ export default {
       discount: '',
       checkboxGroup1: ['Shanghai'],
       cities: ['Shanghai', 'Beijing', 'Guangzhou', 'Shenzhen'],
-      name: '',
+      staffName: '',
       radio1: '操作人',
       staffVisible: false,//选择员工弹出
       salesmanName: '',
@@ -653,7 +637,7 @@ export default {
             buyCount: 1, //购买数量  √
             buyRefId: 0,//	购买类型关联ID, 普通商品为0
             buyType: 'NORMAL',	  //购买类型: BUY_TYPE: NORMAL非赠品, GIFT:普通赠品, TIME_CARD:次卡
-            discountPrice: 0.00,	//折扣价，未改价不传值，两位小数
+            discountPrice: 34.00,	//折扣价，未改价不传值，两位小数
             discountRate: 1,      //折扣率, 未改价为1
             isEdit: false,      //	是否已改过价  √
             productId: 4535634, //	商品ID或者储值卡次卡ID  √
@@ -680,73 +664,74 @@ export default {
         settlementCode: '',
         settlementName: ''
       },
-      goodsList: [{
-        businessType: 'NORMAL',   //	业务类别：NORMAL: 直接收银台, FOSTER: 寄养 √
-        configId: 2324, //	收银台配置ID √
-        customerId: 123, //	客户ID
-        refId: 123,  //	关联业务id
-        coupons: [1223],  //	优惠券ID，目前仅支持单张优惠券
-        details: [ //结算商品列表
-          {
-            businessType: 'NORMAL', //商品类型: NORMAL普通商品, STORE_CARD储值卡, TIME_CARD次卡  √
-            businesses: [
-              {
-                businessType: '导购员',//	业务员类型：SALES_MAN:导购员，OPERATOR:操作员
-                personId: '0989'
-              }
-            ],
-            buyCount: 1, //购买数量  √
-            buyRefId: 0,//	购买类型关联ID, 普通商品为0
-            buyType: 'NORMAL',	  //购买类型: BUY_TYPE: NORMAL非赠品, GIFT:普通赠品, TIME_CARD:次卡
-            discountPrice: 0.00,	//折扣价，未改价不传值，两位小数
-            discountRate: 1,      //折扣率, 未改价为1
-            isEdit: false,      //	是否已改过价  √
-            productId: 4535634, //	商品ID或者储值卡次卡ID  √
-            retailPrice: 34.00,  //	零售价，两位小数
-            skuId: 0,     //	商品sku-id, 无规格商品不传值
-            subtotalAmount: 34.00, //小计总金额, 未改价不传值
-          }
-        ],
-        discountAmount: 0.00, //	整单折扣值/整单立减值
-        discountType: '',  //	discount: 整单折扣; reduce: 整单立减, 不传值，表示未参与收银台优惠
-        payments: [  //付款明细（组合支付）
-          {
-            change: 0.00, //	支付找零金额 ，两位小数
-            details: [  //储值卡支付信息，当支付类型为【余额支付】时必传
-              {
-                customerId: '',  //	客户ID,当支付类型为【押金支付】时必传
-                pay: '',  //	支付金额，两位小数  √
-                storeCardId: '',  //	储值卡id   √
-              }
-            ],
-            pay: 0.00, //	支付金额，两位小数   √
-            payId: '',  //	支付类型ID  √
-            payType: '', //	支付类型   √
-          }
-        ],
-        isSmallChange: false, //	是否抹零   √
-        offerAmount: 0.00,  //	优惠金额，所有优惠金额综合   √
-        paymentAmount: 0.00, //	应收金额   √
-        receiveAmount: 0.00,	 //收到金额，实际支付金额   √
-        smallChangeAmount: 0.00, //	抹零金额
-        totalAmount: 0.00, //	总价金额，订单商品的原价*数量  √
-        remark: ''   //	商家备注
-      }],
+      // goodsList: [{
+      //   businessType: 'NORMAL',   //	业务类别：NORMAL: 直接收银台, FOSTER: 寄养 √
+      //   configId: 2324, //	收银台配置ID √
+      //   customerId: 123, //	客户ID
+      //   refId: 123,  //	关联业务id
+      //   coupons: [1223],  //	优惠券ID，目前仅支持单张优惠券
+      //   details: [ //结算商品列表
+      //     {
+      //       businessType: 'NORMAL', //商品类型: NORMAL普通商品, STORE_CARD储值卡, TIME_CARD次卡  √
+      //       businesses: [
+      //         {
+      //           businessType: '导购员',//	业务员类型：SALES_MAN:导购员，OPERATOR:操作员
+      //           personId: '0989'
+      //         }
+      //       ],
+      //       buyCount: 1, //购买数量  √
+      //       buyRefId: 0,//	购买类型关联ID, 普通商品为0
+      //       buyType: 'NORMAL',	  //购买类型: BUY_TYPE: NORMAL非赠品, GIFT:普通赠品, TIME_CARD:次卡
+      //       discountPrice: 0.00,	//折扣价，未改价不传值，两位小数
+      //       discountRate: 1,      //折扣率, 未改价为1
+      //       isEdit: false,      //	是否已改过价  √
+      //       productId: 4535634, //	商品ID或者储值卡次卡ID  √
+      //       retailPrice: 34.00,  //	零售价，两位小数
+      //       skuId: 0,     //	商品sku-id, 无规格商品不传值
+      //       subtotalAmount: 34.00, //小计总金额, 未改价不传值
+      //     }
+      //   ],
+      //   discountAmount: 0.00, //	整单折扣值/整单立减值
+      //   discountType: '',  //	discount: 整单折扣; reduce: 整单立减, 不传值，表示未参与收银台优惠
+      //   payments: [  //付款明细（组合支付）
+      //     {
+      //       change: 0.00, //	支付找零金额 ，两位小数
+      //       details: [  //储值卡支付信息，当支付类型为【余额支付】时必传
+      //         {
+      //           customerId: '',  //	客户ID,当支付类型为【押金支付】时必传
+      //           pay: '',  //	支付金额，两位小数  √
+      //           storeCardId: '',  //	储值卡id   √
+      //         }
+      //       ],
+      //       pay: 0.00, //	支付金额，两位小数   √
+      //       payId: '',  //	支付类型ID  √
+      //       payType: '', //	支付类型   √
+      //     }
+      //   ],
+      //   isSmallChange: false, //	是否抹零   √
+      //   offerAmount: 0.00,  //	优惠金额，所有优惠金额综合   √
+      //   paymentAmount: 0.00, //	应收金额   √
+      //   receiveAmount: 0.00,	 //收到金额，实际支付金额   √
+      //   smallChangeAmount: 0.00, //	抹零金额
+      //   totalAmount: 0.00, //	总价金额，订单商品的原价*数量  √
+      //   remark: ''   //	商家备注
+      // }],
       settle: {}
     }
   },
   computed: {
     // ...mapGetters(['cart', 'settle', 'userInfo']),
-    // getSummary() {
-    //   // 合计 = 商品总价 - 优惠价 + 运费
-    //   let { total_price, reduceValue } = this.cart
-    //   const { express } = this.cart
-    //   total_price = total_price ? +total_price : 0
-    //   reduceValue = reduceValue ? +reduceValue : 0
-    //   const expressPrice = express && express.expressFee
-    //     ? +express.expressFee : 0
-    //   return (total_price - reduceValue + expressPrice).toFixed(2)
-    // }
+    ...mapGetters(['cart', 'settle']),
+    getSummary() {
+      // 合计 = 商品总价 - 优惠价 + 运费
+      let { total_price, reduceValue } = this.cart
+      const { express } = this.cart
+      total_price = total_price ? +total_price : 0
+      reduceValue = reduceValue ? +reduceValue : 0
+      const expressPrice = express && express.expressFee
+        ? +express.expressFee : 0
+      return (total_price - reduceValue + expressPrice).toFixed(2)
+    }
   },
   watch: {
     'cart.goods.length': {
@@ -767,21 +752,21 @@ export default {
       },
       immediate: true
     },
-    'userInfo.user.orgId': {
-      handler(val) {
-        if (val) {
-          this.getSalesmanNameList()
-          this.salesmanId = (Number(this.cart.salesmanId) == 0 || isNaN(Number(this.cart.salesmanId))) ? '' : Number(this.cart.salesmanId)
-        } else {
-          // 获取用户信息
-          // this.$http.get(this.$api.getUserInfo)
-          //   .then((res) => {
-          //     this.$store.commit('user/SET_USER_INFO', res.data || {})
-          //   })
-        }
-      },
-      immediate: true
-    },
+    // 'userInfo.user.orgId': {
+    //   handler(val) {
+    //     if (val) {
+    //       this.getSalesmanNameList()
+    //       this.salesmanId = (Number(this.cart.salesmanId) == 0 || isNaN(Number(this.cart.salesmanId))) ? '' : Number(this.cart.salesmanId)
+    //     } else {
+    //       // 获取用户信息
+    //       // this.$http.get(this.$api.getUserInfo)
+    //       //   .then((res) => {
+    //       //     this.$store.commit('user/SET_USER_INFO', res.data || {})
+    //       //   })
+    //     }
+    //   },
+    //   immediate: true
+    // },
     logisticsVisible(val) {
       if (!val) {
         Object.keys(this.logisticsForm).forEach(i => {
@@ -937,21 +922,6 @@ export default {
     hanldeCloseReduce() {
       this.$store.commit('cart/CANCEL_REDUCE')
     },
-    // 取消快递打包费用
-    hanldeCloseLogistics() {
-      this.$store.commit('cart/CANCEL_EXPRESS')
-    },
-    // 快递打包
-    handleLogistics() {
-      this.logisticsVisible = true
-      if (this.cart.express && this.cart.express.phone) {
-        this.logisticsForm = Object.assign({}, this.logisticsForm, this.cart.express)
-      } else {
-        this.logisticsForm.receiver = this.cart.memberName
-        this.logisticsForm.phone = this.cart.memberPhone
-        this.logisticsForm.address = this.cart.address
-      }
-    },
     handleSubmitLogistics() {
       this.$refs['logistics-form'].validate((valid) => {
         if (valid) {
@@ -1007,7 +977,7 @@ export default {
         details.push({
           businessType: i.businessType,
           businesses: businesses,
-          buyCount: i.buyCount,
+          chooseStorage: i.chooseStorage,
           buyRefId: i.buyRefId,
           buyType: i.buyType,
           discountPrice: i.discountPrice,
@@ -1048,7 +1018,7 @@ export default {
       //   })
       // } else {
       this.settleLoading = true
-      this.$http.post(this.$api.settleOrder, this.getSubmitParams())
+      this.$http.post(api.settleOrder, this.getSubmitParams())
         .then((res) => {
           // 设置后台结算返回数据
           // this.$store.commit('cart/SET_SETTLE_DATA', res.data || {})
@@ -1061,10 +1031,10 @@ export default {
     },
     // 获取业务员列表
     getSalesmanNameList() {
-      this.$http.get(`${this.$api.getSalesmanNameList}/${this.userInfo.user.orgId}`)
-        .then((res) => {
-          this.options = res.data || []
-        })
+      // this.$http.get(`${this.$api.getSalesmanNameList}/${this.userInfo.user.orgId}`)
+      //   .then((res) => {
+      //     this.options = res.data || []
+      //   })
     },
     bulkMouseOver(index) {
       this.$refs['buikElement' + index].style.display = 'inline'
@@ -1083,7 +1053,7 @@ export default {
 
 <style lang="less" scoped>
 .desk-cart {
-  // width: 100%;
+  width: 100%;
   padding: 20px;
   min-height: calc(100vh - 84px);
   background: #fff;
@@ -1143,6 +1113,7 @@ export default {
     justify-content: space-between;
   }
   .content {
+    // width: 100%;
     margin: 20px 0;
     height: calc(100vh - 290px);
     overflow-y: scroll;

@@ -13,21 +13,18 @@
         <close-bold />
       </el-icon>
     </div>
-    <el-row
-      class="search"
-      justify="space-between"
-    >
-      <el-col :span="7">
+    <el-row class="search">
+      <div>
         <el-radio-group v-model="radio1">
           <el-radio-button label="商品"></el-radio-button>
           <el-radio-button label="服务"></el-radio-button>
           <el-radio-button label="活体"></el-radio-button>
         </el-radio-group>
-      </el-col>
-      <el-col :span="17">
+      </div>
+      <div style="width: 60%">
         <el-input
           ref="keyboard"
-          v-model="name"
+          v-model="goodsName"
           :prefix-icon="Search"
           placeholder="名称或条形码"
           maxlength="50"
@@ -40,7 +37,7 @@
         <!-- <el-icon class="icon-search">
         <search />
       </el-icon> -->
-      </el-col>
+      </div>
 
     </el-row>
     <el-row v-loading="loading">
@@ -49,7 +46,7 @@
         :infinite-scroll-disabled="busy"
         :infinite-scroll-immediate="false"
         :infinite-scroll-delay="200"
-        :style="{ height: isGift ? 'calc(100vh - 230px - 68px)' : 'calc(100vh - 168px - 68px)'}"
+        :style="{ height: isGift ? 'calc(100vh - 230px - 8px)' : 'calc(100vh - 168px - 8px)'}"
         class="content"
       >
         <div class="good-dropdown">
@@ -157,30 +154,31 @@
       :immediate-close="false"
       width="550px"
       center
-      class="return-dialog"
     >
-      <p>收款详情：现金 ¥200.00、POS ¥73.00、支付宝 ¥737.00</p>
-      <div style="margin-bottom: 20px;">
-        退款金额：
-        <el-input
-          v-model="returnAmount"
-          placeholder="Please input"
-          clearable
-          style="width:140px;"
-        />
-        <span style="margin-left: 10px;">元</span>
+      <div>
+        <p>收款详情：现金 ¥200.00、POS ¥73.00、支付宝 ¥737.00</p>
+        <div style="margin-bottom: 20px;">
+          退款金额：
+          <el-input
+            v-model="returnAmount"
+            placeholder="Please input"
+            clearable
+            style="width:140px;"
+          />
+          <span style="margin-left: 10px;">元</span>
 
+        </div>
+        <el-button type="primary">原路退回</el-button>
+        <el-button type="primary">退现金</el-button>
+        <el-button @click="returnVisible = false">取消</el-button>
       </div>
-      <el-button type="primary">原路退回</el-button>
-      <el-button type="primary">退现金</el-button>
-      <el-button @click="returnVisible = false">取消</el-button>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import GoodCard from './components/GoodCard.vue'
-// import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import { ElInfiniteScroll } from 'element-plus'
 export default {
   directives: {
@@ -205,7 +203,7 @@ export default {
       returnVisible: false,
       radio1: '商品',
       isGift: false,
-      name: '',
+      goodsName: '',
       flagQRcode: false,
       arr: [],
       noData: false,
@@ -214,33 +212,34 @@ export default {
         pageSize: 20,
         nameOrNo: ''
       },
-      goodsList: [{
+      goodsList: [
+        // {
         // businessType: 'NORMAL',   //	业务类别：NORMAL: 直接收银台, FOSTER: 寄养 √
         // configId: 2324, //	收银台配置ID √
         // customerId: 123, //	客户ID
         // refId: 123,  //	关联业务id
         // coupons: [1223],  //	优惠券ID，目前仅支持单张优惠券
-        details: [ //结算商品列表
-          {
-            businessType: 'NORMAL', //商品类型: NORMAL普通商品, STORE_CARD储值卡, TIME_CARD次卡  √
-            businesses: [
-              {
-                businessType: '导购员',//	业务员类型：SALES_MAN:导购员，OPERATOR:操作员
-                personId: '0989'
-              }
-            ],
-            buyCount: 1, //购买数量  √
-            buyRefId: 0,//	购买类型关联ID, 普通商品为0
-            buyType: 'NORMAL',	  //购买类型: BUY_TYPE: NORMAL非赠品, GIFT:普通赠品, TIME_CARD:次卡
-            discountPrice: 0.00,	//折扣价，未改价不传值，两位小数
-            discountRate: 1,      //折扣率, 未改价为1
-            isEdit: false,      //	是否已改过价  √
-            productId: 4535634, //	商品ID或者储值卡次卡ID  √
-            retailPrice: 34.00,  //	零售价，两位小数
-            skuId: 0,     //	商品sku-id, 无规格商品不传值
-            subtotalAmount: 34.00, //小计总金额, 未改价不传值
-          }
-        ],
+        // details: [ //结算商品列表
+        //   {
+        //     businessType: 'NORMAL', //商品类型: NORMAL普通商品, STORE_CARD储值卡, TIME_CARD次卡  √
+        //     businesses: [
+        //       {
+        //         businessType: '导购员',//	业务员类型：SALES_MAN:导购员，OPERATOR:操作员
+        //         personId: '0989'
+        //       }
+        //     ],
+        //     buyCount: 1, //购买数量  √
+        //     buyRefId: 0,//	购买类型关联ID, 普通商品为0
+        //     buyType: 'NORMAL',	  //购买类型: BUY_TYPE: NORMAL非赠品, GIFT:普通赠品, TIME_CARD:次卡
+        //     discountPrice: 0.00,	//折扣价，未改价不传值，两位小数
+        //     discountRate: 1,      //折扣率, 未改价为1
+        //     isEdit: false,      //	是否已改过价  √
+        //     productId: 4535634, //	商品ID或者储值卡次卡ID  √
+        //     retailPrice: 34.00,  //	零售价，两位小数
+        //     skuId: 0,     //	商品sku-id, 无规格商品不传值
+        //     subtotalAmount: 34.00, //小计总金额, 未改价不传值
+        //   }
+        // ],
         // discountAmount: 0.00, //	整单折扣值/整单立减值
         // discountType: '',  //	discount: 整单折扣; reduce: 整单立减, 不传值，表示未参与收银台优惠
         // payments: [  //付款明细（组合支付）
@@ -265,7 +264,8 @@ export default {
         // smallChangeAmount: 0.00, //	抹零金额
         // totalAmount: 0.00, //	总价金额，订单商品的原价*数量  √
         // remark: ''   //	商家备注
-      }],
+        // }
+      ],
       busy: false,
       loading: false,
       cart: {
@@ -291,7 +291,7 @@ export default {
     }
   },
   computed: {
-    // ...mapGetters(['cart'])
+    ...mapGetters(['cart'])
   },
   watch: {
     'cart.goods': {
@@ -310,7 +310,7 @@ export default {
       }
     },
     isGift() {
-      this.name = ''
+      this.goodsName = ''
       // this.handleSearch('')
     }
   },
@@ -376,7 +376,7 @@ export default {
               this.$refs['good-card'][0].handleChooseGoods()// 调用加入购物车
               setTimeout(() => {
                 this.$refs['keyboard'].focus() // 搜索框获取焦点
-                this.name = ''
+                this.goodsName = ''
                 this.handleSearch('')
               }, 10)
             })
@@ -422,7 +422,6 @@ export default {
     },
     // 规格
     handleSpecs() {
-      console.log("1111")
       this.$emit('openPage', 'specs')
     },
     // 优惠
@@ -459,6 +458,8 @@ export default {
     padding: 20px 40px;
     width: 100%;
     height: 80px;
+    display: flex;
+    justify-content: space-between;
     // position: relative;
     .el-radio-group {
       line-height: 40px;
@@ -571,14 +572,6 @@ export default {
     border-radius: 6px;
     height: 50px;
     background: rgba(114, 112, 112, 0.8); //滚动条颜色
-  }
-
-  .return-dialog {
-    .input-mount {
-      // display: flex;
-      // justify-content: space-around;
-      // margin-bottom: 20px;
-    }
   }
 }
 </style>

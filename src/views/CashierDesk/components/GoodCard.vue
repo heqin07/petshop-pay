@@ -1,12 +1,11 @@
 <template>
   <div
     :class="{ 'desk-goods-card': true, 'active': data.buyCount && !operate }"
-    :style="{ height: operate ? '110px' : data.gift ? '100px' : '80px' }"
+    :style="{ height: operate ? '130px' : data.gift ? '100px' : '80px' }"
     @click="handleChooseGoods"
   >
     <el-row
       class="title"
-      type="flex"
       justify="space-between"
     >
       <span>
@@ -16,27 +15,27 @@
         >赠品</span>
         {{ data.name }}
       </span>
-      <i
+      <el-icon
         v-if="operate"
         class="el-icon-delete"
         @click.stop="handleDelete"
-      />
+      >
+        <delete></delete>
+      </el-icon>
     </el-row>
     <template v-if="operate">
       <el-row
         class="info"
-        type="flex"
         justify="space-between"
-        style="margin-top:10px;width:150px;"
+        style="margin-top:10px;"
       >
         <span style="width:50px;">{{ data.spec }}/{{ data.unit }}</span>
         <span style="width:80px;">库存：{{ data.availableStock }}</span>
       </el-row>
       <el-row
         class="info"
-        type="flex"
         justify="space-between"
-        style="margin-top:10px"
+        style="margin-top:10px;margin-bottom:10px"
       >
         <span class="price">￥{{ data.retailPrice || '--' }}</span>
         <el-input-number
@@ -45,7 +44,7 @@
           :precision="0"
           :min="1"
           :max="getMaxStorage"
-          size="mini"
+          size="small"
           @input="handleEditCart"
           @click.stop
         />
@@ -60,7 +59,10 @@
         <span class="space">|</span>
         <span>操作人：</span>
         <span class="space">xxx</span>
-        <el-icon class="close">
+        <el-icon
+          class="close"
+          style="font-size: 16px"
+        >
           <circle-plus />
         </el-icon>
       </el-row>
@@ -68,7 +70,6 @@
     <template v-else>
       <el-row
         class="info"
-        type="flex"
         justify="space-between"
       >
         <span>{{ data.spec }}/{{ data.unit }}</span>
@@ -93,7 +94,7 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 export default {
   props: {
     data: {
@@ -141,7 +142,7 @@ export default {
       })
       return storage
     },
-    // ...mapGetters(['cart'])
+    ...mapGetters(['cart'])
   },
   methods: {
     handleChooseGoods() {
@@ -170,7 +171,8 @@ export default {
 
 <style lang="less" scoped>
 .desk-goods-card {
-  // width: 100%;
+  box-sizing: border-box;
+  width: 100%;
   padding: 10px 20px;
   margin-bottom: 20px;
   border-radius: 5px;
@@ -198,7 +200,7 @@ export default {
     span {
       font-size: 12px;
       color: #797979;
-      width: 200px;
+      width: 130px;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
@@ -206,10 +208,10 @@ export default {
     .price {
       font-size: 14px;
       color: rgba(114, 112, 112, 0.85);
-      width: 200px;
+      width: 130px;
     }
     .operate-price {
-      width: 200px;
+      width: 130px;
       text-align: right;
     }
     .gift-price {

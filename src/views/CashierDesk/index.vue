@@ -57,6 +57,8 @@
 </template>
 
 <script>
+// import { ref, reactive } from 'vue'
+import { api } from '../config';
 import Goods from './Goods.vue'
 import cart from './Cart.vue'
 import SelectCustom from './components/SelectCustom.vue'
@@ -68,6 +70,67 @@ import DiscountDetail from './components/DiscountDetail.vue'
 // import { mapGetters } from 'vuex'
 export default {
   components: { Goods, cart, SelectCustom, FetchOrder, Payment, Specs, OrderDiscount, DiscountDetail },
+  // setup() {
+  //   let openCustom = ref(false) // 打开客户列表
+  //   let openFetch = ref(false) // 打开取单列表
+  //   let openPayment = ref(false) // 打开支付页面
+  //   let isGift = ref(false)
+  //   let selectSpecs = ref(false) //打开规格选择
+  //   let openDiscount = ref(false)  //打开整单优惠
+  //   let openDetail = ref(false)  //打开优惠明细
+
+
+  //   // customer客户列表 fetchOrder挂单取单列表 payment支付列表 gift赠品列表
+  //   let handleOpenPage = (val) => {
+  //     if (val === 'customer') {
+  //       openCustom.value = true
+  //     } else if (val === 'fetchOrder') {
+  //       openFetch.value = true
+  //     } else if (val === 'payment') {
+  //       openPayment.value = true
+  //     } else if (val === 'gift') {
+  //       isGift.value = true
+  //     } else if (val === 'specs') {
+  //       selectSpecs.value = true
+  //     } else if (val === 'discount') {
+  //       openDiscount.value = true
+  //     } else if (val === 'discountDetail') {
+  //       openDetail.value = true
+  //     }
+  //   }
+  //   // 获取订单部分支付列表(组合支付)
+  //   let getPaymentList = () => {
+  //     // this.$http.get(this.$api.getPartPaymentList)
+  //     //   .then((res) => {
+  //     //     const cartData = res.data && res.data[0] || {}
+  //     //     const payments = cartData.payments || []
+  //     //     if (payments.length) {
+  //     //       this.$store.commit('cart/SET_CART_DATA', cartData)
+  //     //       this.$store.commit('cart/SET_SETTLE_DATA', cartData)
+  //     //       this.openPayment = true
+  //     //     }
+  //     //     if (this.settle && this.settle.id) {
+  //     //       // 支付成功，清除结算数据，结算未支付，重新打开支付页面
+  //     //       if (this.settle.status == 4) {
+  //     //         this.$store.commit('cart/SET_SETTLE_DATA', {})
+  //     //       } else {
+  //     //         this.openPayment = true
+  //     //       }
+  //     //     }
+  //     //   })
+  //   }
+  //   return {
+  //     openCustom,
+  //     openFetch,
+  //     openPayment,
+  //     isGift,
+  //     selectSpecs,
+  //     openDiscount,
+  //     openDetail,
+  //     handleOpenPage,
+  //     getPaymentList
+  //   }
+  // }
   data() {
     return {
       openCustom: false, // 打开客户列表

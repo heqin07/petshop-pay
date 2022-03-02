@@ -125,7 +125,7 @@
               class="logo"
             >
             <span>{{ i.name || '' }}</span>
-            <span>{{ i.defaultContactPhone | encryptPhone }}</span>
+            <span>{{ i.defaultContactPhone || encryptPhone }}</span>
           </div>
         </el-row>
       </template>
@@ -238,7 +238,7 @@
 <script>
 import KeyBoard from './KeyBoard/index.vue'
 // import print from '../../Order/components/Print'
-// import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     KeyBoard,
@@ -287,6 +287,7 @@ export default {
   },
   computed: {
     // ...mapGetters(['avatar', 'cart', 'settle', 'userInfo']),
+    ...mapGetters(['avatar', 'cart', 'settle']),
     // 应付金额
     getSummary() {
       return Number(this.settle && this.settle.paymentAmount)
@@ -432,7 +433,7 @@ export default {
       if (!this.form.phone || this.form.phone.trim().length !== 11) return
       const params = {
         contactPhone: this.form.phone,
-        orgId: this.userInfo.user.orgId || '',
+        // orgId: this.userInfo.user.orgId || '',
         settlementCycleType: 2
       }
       this.$http.post(this.$api.getCustomerList, params)

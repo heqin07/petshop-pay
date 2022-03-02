@@ -3,46 +3,23 @@ import {
     createStore
 } from 'vuex'
 
-// import Vuex from 'vuex'
-// import getters from './getters'
-// Vue.use(createStore)
-// Vue.use(Vuex.)
+import getters from './getters'
 
-// https://webpack.js.org/guides/dependency-management/#requirecontext
-// const modulesFiles = require.context('./modules', true, /\.js$/)
-
-// you do not need `import app from './modules/app'`
-// it will auto require all vuex module from modules file
-// const modules = modulesFiles.keys().reduce((modules, modulePath) => {
-//     // set './app.js' => 'app'
-//     const moduleName = modulePath.replace(/^\.\/(.*)\.\w+$/, '$1')
-//     const value = modulesFiles(modulePath)
-//     modules[moduleName] = value.default
-//     return modules
-// }, {})
-
-// const store = createStore({
-//     modules,
-//     getters
-// })
-
-// const store = new Vuex.Store({
-//   modules,
-//   getters
-// })
+const files =
+    import.meta.globEager('./modules/*.js')
+const modules = {}
+for (const key in files) {
+    if (files[key].default) {
+        modules[key.replace(/(\.\/modules\/|\.js)/g, '')] = files[key].default
+    }
+}
+Object.keys(modules).forEach(item => {
+    if (modules[item]) {
+        modules[item]['namespaced'] = true
+    }
+})
 
 export default createStore({
-    state: {
-        name: 'default'
-    },
-    mutations: {
-        name: (state, newValue) => {
-            state.name = newValue
-        }
-    },
-    actions: {
-        setName: (cts, value) => {
-            cts.commit('name', value)
-        }
-    }
+    modules,
+    getters
 })

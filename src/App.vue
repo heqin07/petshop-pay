@@ -11,6 +11,7 @@ import HelloWorld from './components/HelloWorld.vue';
       <router-link to="/app">Order App</router-link>
       <router-link to="/cashierDeskConfig">收银台配置</router-link>
       <router-link to="/cashierDesk">收银台</router-link>
+
     </div>
     <router-view />
     <hello-world />

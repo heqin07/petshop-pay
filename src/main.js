@@ -4,7 +4,7 @@ import './common/elementui/reset.less';
 import * as ELIcons from '@element-plus/icons-vue'
 import './style/index.less' // global css
 import router from './router/index';
-import store from './store'
+// import store from './store'
 // import directives from './directives'
 import {
     initApp
@@ -18,10 +18,11 @@ let app = null;
 
 function render(dom) {
     app = initApp(App, router);
-    // app = initApp(App, store);
-    // app = use(store);
+    // app.use(store);
     for (let iconName in ELIcons) {
-        app.component(iconName, ELIcons[iconName])
+        if (!app._context.components[iconName]) {
+            app.component(iconName, ELIcons[iconName])
+        }
     }
     app.mount(dom);
 }

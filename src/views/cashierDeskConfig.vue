@@ -8,11 +8,19 @@
         v-model="discount.isDiscount"
         class="ml-2"
         active-color="#13ce66"
-        :disabled="discount.isReduce"
-      />
+      /><br>
+      <el-tag
+        v-for="(tag, index) in arr1"
+        :key="tag"
+        class="mx-1"
+        closable
+        @close="removeTag(arr1, index)"
+      >
+        {{ tag }}折
+      </el-tag>
       <div
         class="detail"
-        v-if="discount.isDiscount===true"
+        v-if="discount.isDiscount === true"
       >
         <el-input
           type="number"
@@ -34,11 +42,19 @@
         v-model="discount.isReduce"
         class="ml-2"
         active-color="#13ce66"
-        :disabled="discount.isDiscount"
-      />
+      /><br>
+      <el-tag
+        v-for="(tag, index) in arr2"
+        :key="tag"
+        class="mx-1"
+        closable
+        @close="removeTag(arr2, index)"
+      >
+        减{{ tag }}元
+      </el-tag>
       <div
         class="detail"
-        v-if="discount.isReduce===true"
+        v-if="discount.isReduce === true"
       >
         <el-input
           type="number"
@@ -57,7 +73,7 @@
     <p class="little">收赠品设置</p>
     <div
       class="content"
-      style="margin-left:20px"
+      style="margin-left: 20px"
     >
       <el-switch
         v-model="discount.isFreeGift"
@@ -69,7 +85,7 @@
     <p class="little">抹零设置</p>
     <div
       class="content"
-      style="margin-left:20px"
+      style="margin-left: 20px"
     >
       <el-switch
         v-model="discount.isSmallChange"
@@ -80,22 +96,23 @@
     </div>
     <div
       v-if="discount.isSmallChange === true"
-      style="margin-left:20px"
+      style="margin-left: 20px"
       class="info-radio"
     >
-      <div style="color:#666">抹零方式</div>
+      <div style="color: #666">抹零方式</div>
       <el-radio-group v-model="discount.smallChangeType">
         <el-radio
           label="CENT"
           size="large"
-        >抹分</el-radio><br>
-        <div class="text">向下抹分，如9.99元，则实收9.9元</div><br>
+        >抹分</el-radio><br />
+        <div class="text">向下抹分，如9.99元，则实收9.9元</div>
+        <br />
         <el-radio
-          label="2"
-          size="JIAO"
-        >抹角</el-radio><br>
-        <div class="text">向下抹角，如9.9元，则实收9元</div><br>
-
+          label="JIAO"
+          size="large"
+        >抹角</el-radio><br />
+        <div class="text">向下抹角，如9.9元，则实收9元</div>
+        <br />
       </el-radio-group>
       <div class="content">
         <span>自动抹零开关</span>
@@ -108,7 +125,7 @@
       </div>
     </div>
     <p class="little">商品改价功能</p>
-    <div style="margin-left:20px">
+    <div style="margin-left: 20px">
       <div class="content">
         <el-switch
           v-model="discount.isChangePrice"
@@ -118,11 +135,11 @@
         <span>开启后，门店可自行商品改价</span>
       </div>
       <div
-        v-if="discount.isChangePrice ===true"
-        style="color:#666"
+        v-if="discount.isChangePrice === true"
+        style="color: #666"
       >
         <div>
-          <span style="color:#666">商品改价范围：</span>
+          <span style="color: #666">商品改价范围：</span>
           <el-radio-group
             v-model="discount.changePriceType"
             @change="changeType"
@@ -162,7 +179,6 @@
               <span>有效范围：0.01元-10000000元</span>
             </div>
           </div>
-
         </div>
         <div v-if="discount.changePriceType === 'SCALE'">
           <div>
@@ -202,79 +218,92 @@
       <el-button
         type="primary"
         @click="saveConfig"
-        style="margin-left: 250px;
-        margin-top:20px"
+        style="margin-left: 250px; margin-top: 20px"
       >保存</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import { api } from './config';
+import { api } from "./config";
 
 export default {
   data() {
     return {
       discount: {
         isDiscount: true,
-        discountValue: '',
+        discountValue: "",
         isReduce: false,
-        reduceValue: '',
+        reduceValue: "",
         isFreeGift: false,
         isSmallChange: true,
-        smallChangeType: 'CENT',
+        smallChangeType: "CENT",
         isAutoSmallChange: true,
         isChangePrice: true,
-        changePriceType: 'MONEY',
+        changePriceType: "MONEY",
         changePriceMax: 0,
         changePriceMin: 0,
       },
       arr1: [],
-      arr2: []
-    }
+      arr2: [],
+    };
   },
   mounted() {
-    console.log('Component is mounted!')
+    console.log("Component is mounted!");
+    this.loadConfig();
   },
   methods: {
     getDiscountList(val) {
-      console.log(this.discount.discountValue)
+      console.log(this.discount.discountValue);
       if (val === 1) {
-        if (Number(this.discount.discountValue) >= 0.1 && Number(this.discount.discountValue) <= 9.9) {
-          this.arr1.push(this.discount.discountValue)
-          this.discount.discountValue = ''
+        if (
+          Number(this.discount.discountValue) >= 0.1 &&
+          Number(this.discount.discountValue) <= 9.9
+        ) {
+          this.arr1.push(this.discount.discountValue);
+          this.discount.discountValue = "";
         } else {
           ElMessage({
-            message: '整单折扣超出0.1-9.9范围',
-            type: 'warning',
-          })
+            message: "整单折扣超出0.1-9.9范围",
+            type: "warning",
+          });
         }
       } else if (val === 2) {
-        if (Number(this.discount.reduceValue) >= 0 && Number(this.discount.reduceValue) <= 50000) {
-          this.arr2.push(this.discount.reduceValue)
-          this.discount.reduceValue = ''
+        if (
+          Number(this.discount.reduceValue) >= 0 &&
+          Number(this.discount.reduceValue) <= 50000
+        ) {
+          this.arr2.push(this.discount.reduceValue);
+          this.discount.reduceValue = "";
         } else {
           ElMessage({
-            message: '整单立减超出0-50000范围',
-            type: 'warning',
-          })
+            message: "整单立减超出0-50000范围",
+            type: "warning",
+          });
         }
       }
     },
+    removeTag(arr, index) {
+      arr.splice(index, 1)
+    },
     saveConfig() {
-      let params = this.discount
-      params.discountValue = this.arr1.join(',')
-      params.reduceValue = this.arr2.join(',')
+      let params = this.discount;
+      params.discountValue = this.arr1.join(",");
+      params.reduceValue = this.arr2.join(",");
       this.$http.post(api.cashierConfig, params).then((res) => {
-        console.log(res)
+        console.log(res);
+      });
+    },
+    changeType(value) {
+      this.discount.changePriceMin = 0;
+      this.discount.changePriceMax = 0;
+    },
+    loadConfig() {
+      this.$http.get(api.cashierConfigEffecting).then((res) => {
       });
     },
   },
-  changeType(value) {
-    this.discount.changePriceMin = 0
-    this.discount.changePriceMax = 0
-  }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -293,8 +322,11 @@ export default {
     font-size: 14px;
     margin: 0 20px;
   }
+  .mx-1 {
+    margin-bottom: 10px;
+  }
   .detail {
-    margin-left: 40px;
+    margin-left: 20px;
     .el-input {
       width: 140px;
       margin-right: 20px;
